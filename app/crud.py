@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.models import Site_db
-from app.schemas import Site_in, Site
+from models import Site_db
+from schemas import Site_in, Site
 
 def get_site(db: Session, site_slug: str):
     return db.query(Site_db).filter(Site_db.slug == site_slug).first()
