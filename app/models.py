@@ -1,7 +1,7 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, Float
 
-from app.database import Base
+from database import Base
 
 class Site_db(Base):
     __tablename__ = "sites"
