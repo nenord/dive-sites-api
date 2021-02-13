@@ -10,10 +10,10 @@ from slugify import slugify
 #from models import Site_db, Base
 #from schemas import Site
 
-from app.crud import get_site, get_sites, create_site
-from app.models import Site_db, Base
-from app.schemas import Site, Site_in
-from app.database import SessionLocal, engine
+from .crud import get_site, get_sites, create_site
+from .models import Site_db, Base
+from .schemas import Site, Site_in
+from .database import SessionLocal, engine
 
 Base.metadata.create_all(bind=engine)
 
