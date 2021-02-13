@@ -61,6 +61,3 @@ async def read_site(site_slug: str, db: Session = Depends(get_db)):
     if site:
         return site
     raise HTTPException(status_code=404, detail="Site not found")
-
-if __name__ == "__main__":
-    uvicorn.run(app)
