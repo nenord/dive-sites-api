@@ -1,4 +1,4 @@
-fastapi
-mysql-connector-python
-SQLAlchemy
-python-slugify
+fastapi==0.61.1
+SQLAlchemy==1.3.22
+python-slugify==4.0.1
+mysql-connector-python==8.0.23
