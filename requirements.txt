@@ -1,4 +1,5 @@
 fastapi==0.61.1
+psycopg2==2.8.6
 SQLAlchemy==1.3.22
 python-slugify==4.0.1
-pyodbc==4.0.30
+uvicorn==0.12.2
