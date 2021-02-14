@@ -8,7 +8,7 @@ password = os.environ.get('PASSWORD')
 server = os.environ.get('SERVER')
 db = os.environ.get('DATABASE')
 
-SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://{username}:{password}@{server}/{db}".format(username, password, server, db)
+SQLALCHEMY_DATABASE_URL = f'mysql+mysqlconnector://{username}:{password}@{server}/{db}'
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
