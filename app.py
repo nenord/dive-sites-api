@@ -41,6 +41,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {"message": "Welcome to my API, please go to /docs to see details."}
+
 @app.get("/sites", response_model=List[Site])
 async def read_items(db: Session = Depends(get_db)):
     sites = get_sites(db)
