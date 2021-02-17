@@ -1,1 +1,1 @@
-web: uvicorn ibd_app:app
+web: uvicorn app:app
