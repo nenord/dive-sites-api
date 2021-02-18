@@ -1,2 +1,4 @@
+app.db
+Procfile-test
 /venv
 /__pycache__/
