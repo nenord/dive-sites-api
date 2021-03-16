@@ -2,3 +2,5 @@ app.db
 Procfile-test
 /venv
 /__pycache__/
+/alembic/__pycache__
+/alembic/versions/__pycache__

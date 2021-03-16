@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 
 class Site_in(BaseModel):
@@ -8,6 +9,10 @@ class Site_in(BaseModel):
     lon: float = Field(ge=-180, le=180, description="Longitude must be between -180 and 180")
     description: str = Field(
         title="The description of the site: 10-1024 characters", min_length=10, max_length=1024
+    )
+    depth: int = Field(ge=1, le=200, description="Depth in m, must be between 1 and 200")
+    park_approach: Optional[str] = Field(
+        "Not added yet", title="Parking and site approach", min_length=10, max_length=512
     )
 
     class Config:
