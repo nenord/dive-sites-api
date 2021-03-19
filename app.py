@@ -7,12 +7,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from slugify import slugify
 
-#from models import Site_db, Base
-#from schemas import Site
 
-from crud import get_site, get_sites, create_site
-from models import Site_db, Base
-from schemas import Site, Site_in
+from crud import get_site, get_sites, create_site, del_site, update_site
+from models import Sitedb, Base
+from schemas import Site, Site_in, Update_site
 from database import SessionLocal, engine
 
 Base.metadata.create_all(bind=engine)
@@ -59,4 +57,21 @@ async def read_site(site_slug: str, db: Session = Depends(get_db)):
     site = get_site(db, site_slug=site_slug)
     if site:
         return site
+    raise HTTPException(status_code=404, detail="Site not found")
+
+@app.delete("/delete_site/{site_slug}")
+async def read_site(site_slug: str, db: Session = Depends(get_db)):
+    check_site = get_site(db, site_slug=site_slug)
+    if check_site:
+        del_site(db, site_slug=site_slug)
+        return
+    raise HTTPException(status_code=404, detail="Site not found")
+
+@app.patch("/update_site/{site_slug}")
+async def read_site(site_slug: str, site: Update_site, db: Session = Depends(get_db)):
+    check_site = get_site(db, site_slug=site_slug)
+    if check_site:
+        update_dict = site.dict(exclude_unset=True)
+        update_site(db, site=check_site, update_dict=update_dict)
+        return get_site(db, site_slug=site_slug)
     raise HTTPException(status_code=404, detail="Site not found")

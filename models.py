@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Float
 
 from database import Base
 
-class Site_db(Base):
+class Sitedb(Base):
     __tablename__ = "sites"
 
     id = Column(Integer, primary_key=True)

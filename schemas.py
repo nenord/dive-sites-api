@@ -26,3 +26,18 @@ class Site(Site_in):
 
     class Config:
         orm_mode = True
+
+class Update_site(BaseModel):
+    name: Optional[str] = Field(
+        title="Site name: 3-32 characters", min_length=3, max_length=32
+    )
+    description: Optional[str] = Field(
+        title="The description of the site: 10-1024 characters", min_length=10, max_length=1024
+    )
+    depth: Optional[int] = Field(ge=1, le=200, description="Depth in m, must be between 1 and 200")
+    park_approach: Optional[str] = Field(
+        title="Parking and site approach", min_length=10, max_length=512
+    )
+
+    class Config:
+        orm_mode = True
