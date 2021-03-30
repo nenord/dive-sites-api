@@ -1,5 +1,7 @@
 from typing import Optional
+from uuid import UUID
 from pydantic import BaseModel, Field
+from datetime import datetime, timedelta
 
 class Site_in(BaseModel):
     name: str = Field(
@@ -15,17 +17,10 @@ class Site_in(BaseModel):
         "Not added yet", title="Parking and site approach", min_length=10, max_length=512
     )
 
-    class Config:
-        orm_mode = True
-
 class Site(Site_in):
-    id: int
-    slug: str = Field(
-        title="Url safe site name: 3-32 characters", min_length=3, max_length=32
-    )
-
-    class Config:
-        orm_mode = True
+    id: str = Field(alias='_id')
+    #date_created: datetime
+    #owner_id: UUID
 
 class Update_site(BaseModel):
     name: Optional[str] = Field(
@@ -39,5 +34,22 @@ class Update_site(BaseModel):
         title="Parking and site approach", min_length=10, max_length=512
     )
 
-    class Config:
-        orm_mode = True
+class User(BaseModel):
+    user_name: str = Field(
+        title="User name: 3-32 characters", min_length=3, max_length=32
+    )
+    email: str = Field(
+        title="User email: 7-32 characters", min_length=8, max_length=32
+    )
+
+class User_in(User):
+    password: str = Field(
+        title="User input passcode: 8-16 characters", min_length=8, max_length=16
+    )
+
+class User_inDB(User):
+    id: UUID = Field(alias='_id')
+    active: bool
+    password_hash: str
+    #date_registered: datetime
+    

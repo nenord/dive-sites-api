@@ -1,30 +1,42 @@
-from sqlalchemy.orm import Session
-
-from models import Sitedb
+from cloudant import couchdb
 from schemas import Site_in, Site
+import os
 
-def get_site(db: Session, site_slug: str):
-    return db.query(Sitedb).filter(Sitedb.slug == site_slug).first()
+USER = os.environ.get('USER')
+PASSWORD = os.environ.get('PASSWORD')
+COUCHDB_URL = os.environ.get('COUCHDB_URL')
 
-def get_sites(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Sitedb).offset(skip).limit(limit).all()
+def get_sites(skip: int = 0, limit: int = 100):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        sitesdb = client['sites']
+        sites = [site for site in sitesdb]
+    return sites
 
-def create_site(db: Session, site: Site_in, slug: str):
+def get_site(site_id: str):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        sites = client['sites']
+        if (site_id in sites):
+            return sites[site_id]
+
+def create_site(site: Site_in, slug: str):
     site_dict = site.dict()
-    site_dict.update({"slug": slug})
-    db_site = Sitedb(**site_dict)
-    db.add(db_site)
-    db.commit()
-    db.refresh(db_site)
-    return db_site
+    site_dict.update({'_id': slug})
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        sites = client['sites']
+        new_site = sites.create_document(site_dict)
+        return new_site
 
-def del_site(db: Session, site_slug: str):
-    site_del = db.query(Sitedb).filter(Sitedb.slug == site_slug).first()
-    db.delete(site_del)
-    db.commit()
+def del_site(site_id: str):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        sites = client['sites']
+        site = sites[site_id]
+        site.delete()
 
-def update_site(db: Session, site: Sitedb, update_dict: dict):
-    for key, value in update_dict.items():
-        setattr(site, key, value) 
-    db.commit()
-    
+def update_site(site_id: str, update_dict: dict):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        sites = client['sites']
+        site = sites[site_id]
+        for key, value in update_dict.items():
+            site[key] = value
+            site.save()
+        return site

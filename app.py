@@ -1,28 +1,13 @@
-#import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
 from slugify import slugify
 
-
-from crud import get_site, get_sites, create_site, del_site, update_site
-from models import Sitedb, Base
-from schemas import Site, Site_in, Update_site
-from database import SessionLocal, engine
-
-Base.metadata.create_all(bind=engine)
+from crud import get_sites, get_site, create_site, del_site, update_site
+from schemas import Site, Site_in, Update_site, User, User_in, User_inDB
 
 app = FastAPI()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 origins = ["*"]
 
@@ -39,39 +24,38 @@ async def root():
     return {"message": "Welcome to my API, please go to /docs to see details."}
 
 @app.get("/sites", response_model=List[Site])
-async def read_items(db: Session = Depends(get_db)):
-    sites = get_sites(db)
+async def read_items():
+    sites = get_sites()
     return sites
 
-@app.post("/create_site", status_code=201)
-async def add_item(site: Site_in, db: Session = Depends(get_db)):
-    site_dict = site.dict()
-    slug = slugify(site_dict.get('name'))
-    check_site = get_site(db, site_slug=slug)
-    if check_site:
-        raise HTTPException(status_code=409, detail="Cannot create, already a site with that name")
-    return create_site(db, site=site, slug=slug)
-
-@app.get("/sites/{site_slug}")
-async def read_site(site_slug: str, db: Session = Depends(get_db)):
-    site = get_site(db, site_slug=site_slug)
+@app.get("/sites/{site_id}", response_model=Site)
+async def read_site(site_id: str):
+    site = get_site(site_id=site_id)
     if site:
         return site
     raise HTTPException(status_code=404, detail="Site not found")
 
-@app.delete("/delete_site/{site_slug}")
-async def read_site(site_slug: str, db: Session = Depends(get_db)):
-    check_site = get_site(db, site_slug=site_slug)
+@app.post("/create_site", response_model=Site, status_code=201)
+async def add_item(site: Site_in):
+    site_dict = site.dict()
+    slug = slugify(site_dict.get('name'))
+    check_site = get_site(site_id=slug)
     if check_site:
-        del_site(db, site_slug=site_slug)
+       raise HTTPException(status_code=409, detail="Cannot create, already a site with that name")
+    return create_site(site=site, slug=slug)
+
+@app.delete("/delete_site/{site_id}")
+async def read_site(site_id: str):
+    check_site = get_site(site_id=site_id)
+    if check_site:
+        del_site(site_id=site_id)
         return
     raise HTTPException(status_code=404, detail="Site not found")
 
-@app.patch("/update_site/{site_slug}")
-async def read_site(site_slug: str, site: Update_site, db: Session = Depends(get_db)):
-    check_site = get_site(db, site_slug=site_slug)
+@app.patch("/update_site/{site_id}", response_model=Site)
+async def read_site(site_id: str, site: Update_site):
+    check_site = get_site(site_id=site_id)
     if check_site:
         update_dict = site.dict(exclude_unset=True)
-        update_site(db, site=check_site, update_dict=update_dict)
-        return get_site(db, site_slug=site_slug)
+        return update_site(site_id=site_id, update_dict=update_dict)
     raise HTTPException(status_code=404, detail="Site not found")
