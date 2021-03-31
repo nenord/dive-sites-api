@@ -1,6 +1,5 @@
-app.db
 Procfile-test
 /venv
 /__pycache__/
-/alembic/__pycache__
-/alembic/versions/__pycache__
+/app/__pycache__/
+/app/routers/__pycache__/
