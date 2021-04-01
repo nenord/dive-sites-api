@@ -20,7 +20,7 @@ class Site_in(BaseModel):
 class Site(Site_in):
     id: str = Field(alias='_id')
     #date_created: datetime
-    #owner_id: UUID
+    #owner_id: str
 
 class Update_site(BaseModel):
     name: Optional[str] = Field(
@@ -47,8 +47,11 @@ class User_in(User):
         title="User input passcode: 8-16 characters", min_length=8, max_length=16
     )
 
+class User_out(User):
+    id: str = Field(alias='_id')
+
 class User_inDB(User):
-    id: UUID = Field(alias='_id')
+    id: str = Field(alias='_id')
     active: bool
     password_hash: str
     #date_registered: datetime

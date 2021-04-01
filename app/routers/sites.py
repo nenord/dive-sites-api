@@ -5,10 +5,14 @@ from typing import List
 from ..schemas import Site, Site_in, Update_site
 from ..crud import get_sites, get_site, create_site, del_site, update_site
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/sites",
+    tags=["sites"],
+    responses={404: {"description": "Not found"}}
+)
 
 @router.get("/", response_model=List[Site])
-async def read_items():
+async def read_sites():
     sites = get_sites()
     return sites
 
@@ -20,7 +24,7 @@ async def read_site(site_id: str):
     raise HTTPException(status_code=404, detail="Site not found")
 
 @router.post("/create", response_model=Site, status_code=201)
-async def add_item(site: Site_in):
+async def add_site(site: Site_in):
     site_dict = site.dict()
     slug = slugify(site_dict.get('name'))
     check_site = get_site(site_id=slug)
@@ -29,7 +33,7 @@ async def add_item(site: Site_in):
     return create_site(site=site, slug=slug)
 
 @router.delete("/delete/{site_id}")
-async def read_site(site_id: str):
+async def delete_site(site_id: str):
     check_site = get_site(site_id=site_id)
     if check_site:
         del_site(site_id=site_id)
@@ -37,7 +41,7 @@ async def read_site(site_id: str):
     raise HTTPException(status_code=404, detail="Site not found")
 
 @router.patch("/update/{site_id}", response_model=Site)
-async def read_site(site_id: str, site: Update_site):
+async def update_site(site_id: str, site: Update_site):
     check_site = get_site(site_id=site_id)
     if check_site:
         update_dict = site.dict(exclude_unset=True)

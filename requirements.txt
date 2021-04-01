@@ -1,4 +1,6 @@
-cloudant==2.14.0
-fastapi==0.61.1
-python-slugify==4.0.1
-uvicorn==0.12.2
+bcrypt
+cloudant
+fastapi
+passlib
+python-slugify
+uvicorn

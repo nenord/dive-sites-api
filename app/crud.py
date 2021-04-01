@@ -1,10 +1,15 @@
-from cloudant import couchdb
-from .schemas import Site_in, Site
 import os
+from cloudant import couchdb
+from .schemas import Site_in, Site, User_in
+from passlib.context import CryptContext
 
 USER = os.environ.get('USER')
 PASSWORD = os.environ.get('PASSWORD')
 COUCHDB_URL = os.environ.get('COUCHDB_URL')
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# SITES - helper functions
 
 def get_sites(skip: int = 0, limit: int = 100):
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
@@ -40,3 +45,27 @@ def update_site(site_id: str, update_dict: dict):
             site[key] = value
             site.save()
         return site
+
+# USERS - helper functions
+
+def get_user(user_id: str):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        users = client['users']
+        if (user_id in users):
+            return users[user_id]
+
+def create_user(user: User_in):
+    user_dict = user.dict()
+    hash_password = pwd_context.hash(user_dict['password'])
+    user_dict['password'] = hash_password
+    user_dict.update({'active': True})
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        users = client['users']
+        new_user = users.create_document(user_dict)
+        return new_user
+
+def del_user(user_id: str):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        users = client['users']
+        user = users[user_id]
+        user.delete()

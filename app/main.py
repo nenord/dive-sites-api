@@ -3,6 +3,7 @@ from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import sites
+from .routers import users
 
 app = FastAPI()
 
@@ -16,12 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(
-    sites.router,
-    prefix="/sites",
-    tags=["sites"],
-    responses={404: {"description": "Not found"}}
-)
+app.include_router(sites.router,)
+app.include_router(users.router)
 
 @app.get("/")
 async def root():
