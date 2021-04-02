@@ -55,4 +55,11 @@ class User_inDB(User):
     active: bool
     password_hash: str
     #date_registered: datetime
-    
+
+class Update_user(BaseModel):
+    user_name: Optional[str] = Field(
+        title="User name: 3-32 characters", min_length=3, max_length=32
+    )
+    email: Optional[str] = Field(
+        title="User email: 7-32 characters", min_length=8, max_length=32
+    )

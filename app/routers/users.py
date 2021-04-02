@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
-from ..schemas import User, User_in, User_out, User_inDB
-from ..crud import get_user, create_user, del_user
+from ..schemas import User, User_in, User_out, User_inDB, Update_user
+from ..crud import get_user, create_user, del_user, update_user
 
 router = APIRouter(
     prefix="/users",
@@ -27,12 +27,11 @@ async def delete_user(user_id: str):
         del_user(user_id=user_id)
         return
     raise HTTPException(status_code=404, detail="User not found")
-"""
-@router.patch("/update/{site_id}", response_model=Site)
-async def update_site(site_id: str, site: Update_site):
-    check_site = get_site(site_id=site_id)
-    if check_site:
-        update_dict = site.dict(exclude_unset=True)
-        return update_site(site_id=site_id, update_dict=update_dict)
-    raise HTTPException(status_code=404, detail="Site not found")
-"""
+
+@router.patch("/update/{user_id}", response_model=User_out)
+async def update_site(user_id: str, user: Update_user):
+    check_user = get_user(user_id=user_id)
+    if check_user:
+        update_dict = user.dict(exclude_unset=True)
+        return update_user(user_id=user_id, update_dict=update_dict)
+    raise HTTPException(status_code=404, detail="User not found")

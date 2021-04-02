@@ -1,6 +1,6 @@
 import os
 from cloudant import couchdb
-from .schemas import Site_in, Site, User_in
+from .schemas import Site_in, User_in
 from passlib.context import CryptContext
 
 USER = os.environ.get('USER')
@@ -69,3 +69,12 @@ def del_user(user_id: str):
         users = client['users']
         user = users[user_id]
         user.delete()
+
+def update_user(user_id: str, update_dict: dict):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        users = client['users']
+        user = users[user_id]
+        for key, value in update_dict.items():
+            user[key] = value
+            user.save()
+        return user
