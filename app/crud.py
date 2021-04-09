@@ -78,3 +78,20 @@ def update_user(user_id: str, update_dict: dict):
             user[key] = value
             user.save()
         return user
+
+def check_user_name(user_name: str):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        users = client['users']
+        selector = {'user_name': {'$eq': user_name}}
+        docs = users.get_query_result(selector)
+        if len(docs[0]):
+            return docs[0][0]
+
+def check_user_email(user_email: str):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        users = client['users']
+        selector = {'email': {'$eq': user_email}}
+        docs = users.get_query_result(selector)
+        if len(docs[0]):
+            return docs[0][0]
+

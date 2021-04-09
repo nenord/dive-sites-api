@@ -39,7 +39,7 @@ class User(BaseModel):
         title="User name: 3-32 characters", min_length=3, max_length=32
     )
     email: str = Field(
-        title="User email: 7-32 characters", min_length=8, max_length=32
+        title="User email: 8-32 characters", min_length=8, max_length=32
     )
 
 class User_in(User):
@@ -61,5 +61,5 @@ class Update_user(BaseModel):
         title="User name: 3-32 characters", min_length=3, max_length=32
     )
     email: Optional[str] = Field(
-        title="User email: 7-32 characters", min_length=8, max_length=32
+        title="User email: 8-32 characters", min_length=8, max_length=32
     )

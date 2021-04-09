@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from ..schemas import User, User_in, User_out, User_inDB, Update_user
-from ..crud import get_user, create_user, del_user, update_user
+from ..crud import get_user, create_user, del_user, update_user, check_user_name, check_user_email
 
 router = APIRouter(
     prefix="/users",
@@ -18,6 +18,13 @@ async def read_user(user_id: str):
 
 @router.post("/create", response_model=User_out, status_code=201)
 async def add_user(user: User_in):
+    user_dict = user.dict()
+    user_name = user_dict['user_name']
+    user_email = user_dict['email']
+    name_check = check_user_name(user_name)
+    email_check = check_user_email(user_email)
+    if (name_check or email_check):
+        raise HTTPException(status_code=409, detail="Cannot create, already a user with that name or email")
     return create_user(user=user)
 
 @router.delete("/delete/{user_id}")
