@@ -1,5 +1,5 @@
 # dive-sites-api
-API for crowed sourced dive sites app
+API for a crowdsourced dive sites app
 
 Built using fastAPI couchDB
 
