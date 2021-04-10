@@ -1,8 +1,9 @@
 # dive-sites-api
 API for crowed sources dive sites app
 
-GET /sites - get all dive sites
+Built using fastAPI
 
-GET /sites/<site:str> - get one dive site by unique is (slug)
+A **work in progress** example: http://api.nenoapps.tk/docs
 
-POST /create_site - create a new site for mandatory fielgs visit /docs endpoint
+Deployed via Dokku running on Google Cloud VM.
+
