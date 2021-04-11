@@ -41,7 +41,7 @@ async def delete_site(site_id: str):
     raise HTTPException(status_code=404, detail="Site not found")
 
 @router.patch("/update/{site_id}", response_model=Site)
-async def update_site(site_id: str, site: Update_site):
+async def update_sites(site_id: str, site: Update_site):
     check_site = get_site(site_id=site_id)
     if check_site:
         update_dict = site.dict(exclude_unset=True)

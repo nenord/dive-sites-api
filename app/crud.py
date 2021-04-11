@@ -2,10 +2,17 @@ import os
 from cloudant import couchdb
 from .schemas import Site_in, User_in
 from passlib.context import CryptContext
+from .parse_db import parse_url
 
-USER = os.environ.get('USER')
-PASSWORD = os.environ.get('PASSWORD')
-COUCHDB_URL = os.environ.get('COUCHDB_URL')
+if os.environ.get('TEST'):
+    USER = os.environ.get('USER')
+    PASSWORD = os.environ.get('PASSWORD')
+    COUCHDB_URL = os.environ.get('COUCHDB_URL')
+else:
+    url_str = os.environ.get('COUCHDB_URL')
+    USER = url_str[0]
+    PASSWORD = url_str[1]
+    COUCHDB_URL = url_str[2]
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

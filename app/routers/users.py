@@ -36,7 +36,7 @@ async def delete_user(user_id: str):
     raise HTTPException(status_code=404, detail="User not found")
 
 @router.patch("/update/{user_id}", response_model=User_out)
-async def update_site(user_id: str, user: Update_user):
+async def update_users(user_id: str, user: Update_user):
     check_user = get_user(user_id=user_id)
     if check_user:
         update_dict = user.dict(exclude_unset=True)
