@@ -9,7 +9,7 @@ if os.environ.get('TEST'):
     PASSWORD = os.environ.get('PASSWORD')
     COUCHDB_URL = os.environ.get('COUCHDB_URL')
 else:
-    url_str = os.environ.get('COUCHDB_URL')
+    url_str = parse_url(os.environ.get('COUCHDB_URL'))
     USER = url_str[0]
     PASSWORD = url_str[1]
     COUCHDB_URL = url_str[2]
