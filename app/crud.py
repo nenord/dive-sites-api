@@ -1,8 +1,7 @@
 import os
 from cloudant import couchdb
 from .schemas import Site_in, User_in
-from passlib.context import CryptContext
-from .parse_db import parse_url
+from .helpers import parse_url, get_password_hash
 
 if os.environ.get('TEST'):
     USER = os.environ.get('USER')
@@ -13,8 +12,6 @@ else:
     USER = url_str[0]
     PASSWORD = url_str[1]
     COUCHDB_URL = url_str[2]
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # SITES - helper functions
 
@@ -63,7 +60,7 @@ def get_user(user_id: str):
 
 def create_user(user: User_in):
     user_dict = user.dict()
-    hash_password = pwd_context.hash(user_dict['password'])
+    hash_password = get_password_hash(user_dict['password'])
     user_dict['password'] = hash_password
     user_dict.update({'active': True})
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
@@ -101,4 +98,3 @@ def check_user_email(user_email: str):
         docs = users.get_query_result(selector)
         if len(docs[0]):
             return docs[0][0]
-

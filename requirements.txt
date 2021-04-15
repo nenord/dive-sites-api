@@ -1,6 +1,9 @@
 bcrypt
 cloudant
+cryptography
 fastapi
 passlib
+python-jose
+python-multipart
 python-slugify
 uvicorn

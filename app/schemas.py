@@ -49,11 +49,9 @@ class User_in(User):
 
 class User_out(User):
     id: str = Field(alias='_id')
-
-class User_inDB(User):
-    id: str = Field(alias='_id')
     active: bool
-    password_hash: str
+
+#class User_inDB(User_out):
     #date_registered: datetime
 
 class Update_user(BaseModel):

@@ -1,9 +1,14 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import sites
-from .routers import users
+from fastapi.security import OAuth2PasswordRequestForm
+
+from .routers import sites, users
+from .crud import check_user_email
+from .helpers import verify_password
+from .auth import create_access_token, get_current_user
+from .schemas import User_out
 
 app = FastAPI()
 
@@ -23,5 +28,20 @@ app.include_router(users.router)
 @app.get("/")
 async def root():
     return {"message": "Welcome to my API, please go to /docs to see details."}
+
+@app.post("/token")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    login_exception = HTTPException(status_code=400, detail="Incorrect username or password")
+    user = check_user_email(form_data.username)
+    if not user:
+        raise login_exception
+    if not verify_password(form_data.password, user['password']):
+       raise login_exception
+    access_token = create_access_token( data={"sub": user['user_name']} )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/whoami")
+async def who_am_i(current_user: User_out = Depends(get_current_user)):
+    return current_user
 
 

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from ..schemas import User, User_in, User_out, User_inDB, Update_user
+from ..schemas import User, User_in, User_out, Update_user
 from ..crud import get_user, create_user, del_user, update_user, check_user_name, check_user_email
 
 router = APIRouter(
