@@ -1,6 +1,6 @@
 import os
 from cloudant import couchdb
-from .schemas import Site_in, User_in
+from .schemas import Site_in, User_in, User_out, User_inDB
 from .helpers import parse_url, get_password_hash
 
 if os.environ.get('TEST'):
@@ -27,9 +27,9 @@ def get_site(site_id: str):
         if (site_id in sites):
             return sites[site_id]
 
-def create_site(site: Site_in, slug: str):
+def create_site(site: Site_in, slug: str, owner: str):
     site_dict = site.dict()
-    site_dict.update({'_id': slug})
+    site_dict.update([('_id', slug), ('owner_id', owner)])
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
         sites = client['sites']
         new_site = sites.create_document(site_dict)
@@ -52,6 +52,12 @@ def update_site(site_id: str, update_dict: dict):
 
 # USERS - helper functions
 
+def get_users(skip: int = 0, limit: int = 100):
+    with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
+        usersdb = client['users']
+        users = [user for user in usersdb]
+    return users
+
 def get_user(user_id: str):
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
         users = client['users']
@@ -61,8 +67,9 @@ def get_user(user_id: str):
 def create_user(user: User_in):
     user_dict = user.dict()
     hash_password = get_password_hash(user_dict['password'])
-    user_dict['password'] = hash_password
-    user_dict.update({'active': True})
+    user_dict['password_hash'] = hash_password
+    user_dict.pop('password')
+    user_dict.update([('active', True), ('password_hash', hash_password)])
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
         users = client['users']
         new_user = users.create_document(user_dict)
@@ -89,7 +96,7 @@ def check_user_name(user_name: str):
         selector = {'user_name': {'$eq': user_name}}
         docs = users.get_query_result(selector)
         if len(docs[0]):
-            return docs[0][0]
+            return User_out(**docs[0][0])
 
 def check_user_email(user_email: str):
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
@@ -97,4 +104,4 @@ def check_user_email(user_email: str):
         selector = {'email': {'$eq': user_email}}
         docs = users.get_query_result(selector)
         if len(docs[0]):
-            return docs[0][0]
+            return User_inDB(**docs[0][0])

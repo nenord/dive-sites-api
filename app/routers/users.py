@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from typing import List
 
 from ..schemas import User, User_in, User_out, Update_user
-from ..crud import get_user, create_user, del_user, update_user, check_user_name, check_user_email
+from ..crud import get_user, get_users, create_user, del_user, update_user, check_user_name, check_user_email
+from ..auth import get_current_user
 
 router = APIRouter(
     prefix="/users",
@@ -9,8 +11,13 @@ router = APIRouter(
     responses={404: {"description": "Not found"}}
 )
 
+@router.get("/", response_model=List[User_out])
+async def read_users(current_user: User_out = Depends(get_current_user)):
+    users = get_users()
+    return users
+
 @router.get("/{user_id}", response_model=User_out)
-async def read_user(user_id: str):
+async def read_user(user_id: str, current_user: User_out = Depends(get_current_user)):
     user = get_user(user_id=user_id)
     if user:
         return user
@@ -28,7 +35,7 @@ async def add_user(user: User_in):
     return create_user(user=user)
 
 @router.delete("/delete/{user_id}")
-async def delete_user(user_id: str):
+async def delete_user(user_id: str, current_user: User_out = Depends(get_current_user)):
     check_user = get_user(user_id=user_id)
     if check_user:
         del_user(user_id=user_id)
@@ -36,7 +43,7 @@ async def delete_user(user_id: str):
     raise HTTPException(status_code=404, detail="User not found")
 
 @router.patch("/update/{user_id}", response_model=User_out)
-async def update_users(user_id: str, user: Update_user):
+async def update_users(user_id: str, user: Update_user, current_user: User_out = Depends(get_current_user)):
     check_user = get_user(user_id=user_id)
     if check_user:
         update_dict = user.dict(exclude_unset=True)

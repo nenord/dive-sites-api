@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from slugify import slugify
 from typing import List
 
-from ..schemas import Site, Site_in, Update_site
+from ..schemas import Site, Site_in, Update_site, User_out
 from ..crud import get_sites, get_site, create_site, del_site, update_site
+from ..auth import get_current_user
 
 router = APIRouter(
     prefix="/sites",
@@ -24,16 +25,16 @@ async def read_site(site_id: str):
     raise HTTPException(status_code=404, detail="Site not found")
 
 @router.post("/create", response_model=Site, status_code=201)
-async def add_site(site: Site_in):
+async def add_site(site: Site_in, current_user: User_out = Depends(get_current_user)):
     site_dict = site.dict()
     slug = slugify(site_dict.get('name'))
     check_site = get_site(site_id=slug)
     if check_site:
        raise HTTPException(status_code=409, detail="Cannot create, already a site with that name")
-    return create_site(site=site, slug=slug)
+    return create_site(site=site, slug=slug, owner=current_user.id)
 
 @router.delete("/delete/{site_id}")
-async def delete_site(site_id: str):
+async def delete_site(site_id: str, current_user: User_out = Depends(get_current_user)):
     check_site = get_site(site_id=site_id)
     if check_site:
         del_site(site_id=site_id)
@@ -41,7 +42,7 @@ async def delete_site(site_id: str):
     raise HTTPException(status_code=404, detail="Site not found")
 
 @router.patch("/update/{site_id}", response_model=Site)
-async def update_sites(site_id: str, site: Update_site):
+async def update_sites(site_id: str, site: Update_site, current_user: User_out = Depends(get_current_user)):
     check_site = get_site(site_id=site_id)
     if check_site:
         update_dict = site.dict(exclude_unset=True)

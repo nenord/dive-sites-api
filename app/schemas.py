@@ -19,8 +19,8 @@ class Site_in(BaseModel):
 
 class Site(Site_in):
     id: str = Field(alias='_id')
+    owner_id: str
     #date_created: datetime
-    #owner_id: str
 
 class Update_site(BaseModel):
     name: Optional[str] = Field(
@@ -49,9 +49,11 @@ class User_in(User):
 
 class User_out(User):
     id: str = Field(alias='_id')
+    
+class User_inDB(User_out):
+    rev: str = Field(alias='_rev')
     active: bool
-
-#class User_inDB(User_out):
+    password_hash: str
     #date_registered: datetime
 
 class Update_user(BaseModel):

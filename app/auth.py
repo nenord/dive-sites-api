@@ -4,7 +4,6 @@ from typing import Optional
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer
 
-from .schemas import User_out
 from .crud import check_user_name
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -38,4 +37,4 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     user = check_user_name(token_username)
     if user is None:
         raise credentials_exception
-    return User_out(**user)
+    return user
