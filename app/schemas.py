@@ -1,7 +1,6 @@
 from typing import Optional
 from uuid import UUID
-from pydantic import BaseModel, Field
-from datetime import datetime, timedelta
+from pydantic import BaseModel, Field, EmailStr
 
 class Site_in(BaseModel):
     name: str = Field(
@@ -20,8 +19,8 @@ class Site_in(BaseModel):
 class Site(Site_in):
     id: str = Field(alias='_id')
     owner_id: str
-    #date_created: datetime
-
+    created_on_utc: str
+    
 class Update_site(BaseModel):
     name: Optional[str] = Field(
         title="Site name: 3-32 characters", min_length=3, max_length=32
@@ -38,8 +37,8 @@ class User(BaseModel):
     user_name: str = Field(
         title="User name: 3-32 characters", min_length=3, max_length=32
     )
-    email: str = Field(
-        title="User email: 8-32 characters", min_length=8, max_length=32
+    email: EmailStr = Field(
+        title="User email"
     )
 
 class User_in(User):
@@ -52,9 +51,8 @@ class User_out(User):
     
 class User_inDB(User_out):
     rev: str = Field(alias='_rev')
-    active: bool
     password_hash: str
-    #date_registered: datetime
+    registered_on_utc: str
 
 class Update_user(BaseModel):
     user_name: Optional[str] = Field(

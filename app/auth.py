@@ -3,20 +3,23 @@ from fastapi import Depends, HTTPException, status
 from typing import Optional
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer
+import os
 
-from .crud import check_user_name
+from .crud import get_user
+from .schemas import User_out
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-SECRET_KEY = "ba503476f568da5f622e3ea9191bebc5664c7eb8fe02e99e1ce1768ba8a7b6bb"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 ALGORITHM = "HS256"
+EXPIRE_TOKEN = os.environ.get("EXPIRE_TOKEN")
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict, expires_delta: Optional[int] = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.utcnow() + timedelta(minutes=expires_delta)
     else:
-        expire = datetime.utcnow() + timedelta(minutes=5)
+        expire = datetime.utcnow() + timedelta(minutes=int(EXPIRE_TOKEN))
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -29,12 +32,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        token_username: str = payload.get("sub")
-        if token_username is None:
+        token_id: str = payload.get("sub")
+        if token_id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = check_user_name(token_username)
+    user = get_user(token_id)
     if user is None:
         raise credentials_exception
-    return user
+    return User_out(**user)

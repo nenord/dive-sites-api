@@ -2,6 +2,7 @@ bcrypt
 cloudant
 cryptography
 fastapi
+fastapi-mail
 passlib
 python-jose
 python-multipart

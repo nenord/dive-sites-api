@@ -2,6 +2,7 @@ import os
 from cloudant import couchdb
 from .schemas import Site_in, User_in, User_out, User_inDB
 from .helpers import parse_url, get_password_hash
+from datetime import datetime
 
 if os.environ.get('TEST'):
     USER = os.environ.get('USER')
@@ -29,7 +30,8 @@ def get_site(site_id: str):
 
 def create_site(site: Site_in, slug: str, owner: str):
     site_dict = site.dict()
-    site_dict.update([('_id', slug), ('owner_id', owner)])
+    site_dict.update([('_id', slug), ('owner_id', owner), 
+        ('created_on_utc', datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f'))])
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
         sites = client['sites']
         new_site = sites.create_document(site_dict)
@@ -67,9 +69,9 @@ def get_user(user_id: str):
 def create_user(user: User_in):
     user_dict = user.dict()
     hash_password = get_password_hash(user_dict['password'])
-    user_dict['password_hash'] = hash_password
     user_dict.pop('password')
-    user_dict.update([('active', True), ('password_hash', hash_password)])
+    user_dict.update([('password_hash', hash_password),
+        ('registered_on_utc', datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f'))])
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
         users = client['users']
         new_user = users.create_document(user_dict)

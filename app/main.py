@@ -3,6 +3,7 @@ from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi.security import OAuth2PasswordRequestForm
+from starlette.responses import RedirectResponse
 
 from .routers import sites, users
 from .crud import check_user_email
@@ -27,7 +28,7 @@ app.include_router(users.router)
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to my API, please go to /docs to see details."}
+    return RedirectResponse("/docs")
 
 @app.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -37,7 +38,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         raise login_exception
     if not verify_password(form_data.password, user.password_hash):
        raise login_exception
-    access_token = create_access_token( data={"sub": user.user_name, "id": user.id} )
+    access_token = create_access_token( data={"sub": user.id} )
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/whoami")
