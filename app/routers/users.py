@@ -14,13 +14,17 @@ router = APIRouter(
 @router.get("/", response_model=List[User_out])
 async def read_users(current_user: User_out = Depends(get_current_user)):
     users = get_users()
-    return users
+    if current_user.user_name == 'admin':
+        return users
+    raise HTTPException(status_code=403, detail="Not authorized")
 
 @router.get("/{user_id}", response_model=User_out)
 async def read_user(user_id: str, current_user: User_out = Depends(get_current_user)):
     user = get_user(user_id=user_id)
     if user:
-        return user
+        if user['_id'] == current_user.id or current_user.user_name == 'admin':
+            return user
+        raise HTTPException(status_code=403, detail="Not authorized")
     raise HTTPException(status_code=404, detail="User not found")
 
 @router.post("/create", response_model=User_out, status_code=201)
@@ -36,16 +40,20 @@ async def add_user(user: User_in):
 
 @router.delete("/delete/{user_id}")
 async def delete_user(user_id: str, current_user: User_out = Depends(get_current_user)):
-    check_user = get_user(user_id=user_id)
-    if check_user:
-        del_user(user_id=user_id)
-        return
+    user = get_user(user_id=user_id)
+    if user:
+        if user['_id'] == current_user.id or current_user.user_name == 'admin':
+            del_user(user_id=user_id)
+            return
+        raise HTTPException(status_code=403, detail="Not authorized")    
     raise HTTPException(status_code=404, detail="User not found")
 
 @router.patch("/update/{user_id}", response_model=User_out)
 async def update_users(user_id: str, user: Update_user, current_user: User_out = Depends(get_current_user)):
-    check_user = get_user(user_id=user_id)
-    if check_user:
-        update_dict = user.dict(exclude_unset=True)
-        return update_user(user_id=user_id, update_dict=update_dict)
+    user_is = get_user(user_id=user_id)
+    if user_is:
+        if user_is['_id'] == current_user.id or current_user.user_name == 'admin':
+            update_dict = user.dict(exclude_unset=True)
+            return update_user(user_id=user_id, update_dict=update_dict)
+        raise HTTPException(status_code=403, detail="Not authorized")
     raise HTTPException(status_code=404, detail="User not found")
