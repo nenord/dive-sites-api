@@ -65,11 +65,13 @@ And add ‘users’ database with CouchDB API call, it will look something like 
 
 ```curl -X PUT http://sites:<generated-complex-password>@dokku-couchdb-sites:5984/users```
 
+For more info on CouchDB API and how to manipulate it please see this guide: https://docs.couchdb.org/en/stable/intro/api.html
+
 If it went well, you will receive the following response:
 
 ```{"ok":true}```
 
-Exit app container by siply typing ```exit```.
+Exit app container by simply typing ```exit```.
 
 Before deploying the app, add two environment variables:
 
