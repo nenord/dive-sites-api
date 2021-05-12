@@ -19,12 +19,12 @@ Run a CouchDB docker image with:
 ```docker run -d --name my-couchdb -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password -p 5984:5984 couchdb:latest```
 
 Setup the following environment variables:
-1.	TEST=<any string> (it just needs to exist and be some non-null/non-false value; used for the environment to know it is on dev and pick up Docker container database)
+1.	TEST=```<any string>``` (it just needs to exist and be some non-null/non-false value; used for the environment to know it is on dev and pick up Docker container database)
 2.	USER=admin
 3.	PASSWORD=password
 4.	EXPIRE_TOKEN=30 (this is just example; it can be longer or less but needs to be an integer; token expiration time in minutes)
 5.	COUCHDB_URL=http://127.0.0.1:5984
-6.	SECRET_KEY=<some complicated hard to guess string> (used for encoding jwt tokens)
+6.	SECRET_KEY=```<some complicated hard to guess string>``` (used for encoding jwt tokens)
 
 Setup a venv virtual environment and then enter the virtual environment.
 Install requirements: 
