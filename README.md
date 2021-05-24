@@ -39,7 +39,9 @@ Run the app from the root folder with uvicorn:
 
 Assumption: You have a Dokku system running on a VM by following this guide: https://dokku.com/docs/getting-started/installation/
 
-Create the app using this guide (do not create a Postgres database or deploy the app yet, just create it): https://dokku.com/docs/deployment/application-deployment/#create-the-app 
+Create the app using this guide (do not create a Postgres database or deploy the app yet, just create it): https://dokku.com/docs/deployment/application-deployment/#create-the-app
+
+### Set up a database
 
 Install a CouchDB plugin: 
 
@@ -57,7 +59,21 @@ This will create an environment variable in your app called COUCHDB_URL that wil
 
 ```COUCHDB_URL=http://sites:<generated-complex-password>@dokku-couchdb-sites:5984/sites```
 
-Now your CouchDB instance has one database called ‘sites’, you also need a database called ‘users’. To do that enter your app's container:
+Now your CouchDB instance has one database called ‘sites’, you will also need to create a database called ‘users’ after deploying the app.
+
+### Deploy the app
+
+Before deploying the app, add two environment variables:
+
+```dokku config:set <your app> EXPIRE_TOKEN=30 SECRET_KEY =<some complicated hard to guess string>```
+
+Note: EXPIRE_TOKEN variable can be more or less, as long as it is an int (it controls jwt token expiry)
+
+Now you can deploy the app using: https://dokku.com/docs/deployment/application-deployment/#deploy-the-app 
+
+### Complete the database setup
+
+Enter your app's container:
 
 ```dokku enter <your app>```
 
@@ -73,11 +89,7 @@ If it went well, you will receive the following response:
 
 Exit app container by simply typing ```exit```.
 
-Before deploying the app, add two environment variables:
+Your app should now be ready.
 
-```dokku config:set <your app> EXPIRE_TOKEN=30 SECRET_KEY =<some complicated hard to guess string>```
 
-Note: EXPIRE_TOKEN variable can be more or less, as long as it is an int (it controls jwt token expiry)
-
-Now you can deploy the app using: https://dokku.com/docs/deployment/application-deployment/#deploy-the-app 
 
