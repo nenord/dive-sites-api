@@ -39,7 +39,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     if not verify_password(form_data.password, user.password_hash):
        raise login_exception
     access_token = create_access_token( data={"sub": user.id} )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "user_name": user.user_name, "token_type": "bearer"}
 
 @app.get("/whoami")
 async def who_am_i(current_user: User_out = Depends(get_current_user)):
