@@ -70,8 +70,11 @@ def create_user(user: User_in):
     user_dict = user.dict()
     hash_password = get_password_hash(user_dict['password'])
     user_dict.pop('password')
-    user_dict.update([('password_hash', hash_password),
-        ('registered_on_utc', datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f'))])
+    user_dict.update([
+        ('password_hash', hash_password),
+        ('registered_on_utc', datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')),
+        ('role', 'standard')
+    ])
     with couchdb(USER, PASSWORD, url=COUCHDB_URL) as client:
         users = client['users']
         new_user = users.create_document(user_dict)

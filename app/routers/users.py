@@ -14,7 +14,7 @@ router = APIRouter(
 @router.get("/", response_model=List[User_out])
 async def read_users(current_user: User_out = Depends(get_current_user)):
     users = get_users()
-    if current_user.user_name == 'admin':
+    if current_user.role == 'admin':
         return users
     raise HTTPException(status_code=403, detail="Not authorized")
 
@@ -22,7 +22,7 @@ async def read_users(current_user: User_out = Depends(get_current_user)):
 async def read_user(user_id: str, current_user: User_out = Depends(get_current_user)):
     user = get_user(user_id=user_id)
     if user:
-        if user['_id'] == current_user.id or current_user.user_name == 'admin':
+        if user['_id'] == current_user.id or current_user.role == 'admin':
             return user
         raise HTTPException(status_code=403, detail="Not authorized")
     raise HTTPException(status_code=404, detail="User not found")
@@ -42,7 +42,7 @@ async def add_user(user: User_in):
 async def delete_user(user_id: str, current_user: User_out = Depends(get_current_user)):
     user = get_user(user_id=user_id)
     if user:
-        if user['_id'] == current_user.id or current_user.user_name == 'admin':
+        if user['_id'] == current_user.id or current_user.role == 'admin':
             del_user(user_id=user_id)
             return
         raise HTTPException(status_code=403, detail="Not authorized")    
@@ -52,7 +52,7 @@ async def delete_user(user_id: str, current_user: User_out = Depends(get_current
 async def update_users(user_id: str, user: Update_user, current_user: User_out = Depends(get_current_user)):
     user_is = get_user(user_id=user_id)
     if user_is:
-        if user_is['_id'] == current_user.id or current_user.user_name == 'admin':
+        if user_is['_id'] == current_user.id or current_user.role == 'admin':
             update_dict = user.dict(exclude_unset=True)
             return update_user(user_id=user_id, update_dict=update_dict)
         raise HTTPException(status_code=403, detail="Not authorized")

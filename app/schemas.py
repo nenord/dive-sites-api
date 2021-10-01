@@ -48,6 +48,7 @@ class User_in(User):
 
 class User_out(User):
     id: str = Field(alias='_id')
+    role: str
     
 class User_inDB(User_out):
     rev: str = Field(alias='_rev')

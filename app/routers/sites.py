@@ -37,7 +37,7 @@ async def add_site(site: Site_in, current_user: User_out = Depends(get_current_u
 async def delete_site(site_id: str, current_user: User_out = Depends(get_current_user)):
     site = get_site(site_id=site_id)
     if site:
-        if current_user.user_name == 'admin':
+        if current_user.role == 'admin':
             del_site(site_id=site_id)
             return
         raise HTTPException(status_code=403, detail="Not authorized")
@@ -47,7 +47,7 @@ async def delete_site(site_id: str, current_user: User_out = Depends(get_current
 async def update_sites(site_id: str, site: Update_site, current_user: User_out = Depends(get_current_user)):
     site_is = get_site(site_id=site_id)
     if site_is:
-        if site_is['owner_id'] == current_user.id or current_user.user_name == 'admin':
+        if site_is['owner_id'] == current_user.id or current_user.role == 'admin':
             update_dict = site.dict(exclude_unset=True)
             return update_site(site_id=site_id, update_dict=update_dict)
         raise HTTPException(status_code=403, detail="Not authorized")
