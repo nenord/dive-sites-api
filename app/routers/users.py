@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 
-from ..schemas import User, User_in, User_out, Update_user
+from ..schemas import User_in, User_out, Update_user
 from ..crud import get_user, get_users, create_user, del_user, update_user, check_user_name, check_user_email
 from ..auth import get_current_user
 

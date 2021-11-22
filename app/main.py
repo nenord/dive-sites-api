@@ -9,7 +9,7 @@ from .routers import sites, users
 from .crud import check_user_email
 from .helpers import verify_password
 from .auth import create_access_token, get_current_user
-from .schemas import User_out, User_inDB
+from .schemas import User_out
 
 app = FastAPI()
 
