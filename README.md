@@ -47,19 +47,22 @@ Install a CouchDB plugin:
 
 ```sudo dokku plugin:install https://github.com/dokku/dokku-couchdb.git couchdb```
 
-Create a CouchDB database (call it ‘sites’):
+Create a CouchDB databases (call them ‘sites’ and 'users'):
 
 ```dokku couchdb:create sites```
+```dokku couchdb:create users```
 
 Link the sites database with your app:
 
-```dokku couchdb:link sites <your app>```
+```dokku couchdb:link sites <your app>  --alias COUCHDB_SITES```
+```dokku couchdb:link users <your app>  --alias COUCHDB_USERS```
 
-This will create an environment variable in your app called COUCHDB_URL that will look something like this:
+This will create an environment variable in your app that will look something like this:
 
-```COUCHDB_URL=http://sites:<generated-complex-password>@dokku-couchdb-sites:5984/sites```
+```COUCHDB_SITES_URL=http://sites:<generated-complex-password>@dokku-couchdb-sites:5984/sites```
+```COUCHDB_USERS_URL=http://users:<generated-complex-password>@dokku-couchdb-sites:5984/users```
 
-Now your CouchDB instance has one database called ‘sites’, you will also need to create a database called ‘users’ after deploying the app.
+Now your CouchDB instance has databases called ‘sites’ and ‘users’.
 
 ### Deploy the app
 
@@ -71,25 +74,8 @@ Note: EXPIRE_TOKEN variable can be more or less, as long as it is an int (it con
 
 Now you can deploy the app using: https://dokku.com/docs/deployment/application-deployment/#deploy-the-app 
 
-### Complete the database setup
 
-Enter your app's container:
-
-```dokku enter <your app>```
-
-And add ‘users’ database with CouchDB API call, it will look something like this:
-
-```curl -X PUT http://sites:<generated-complex-password>@dokku-couchdb-sites:5984/users```
-
-For more info on CouchDB API and how to manipulate it please see this guide: https://docs.couchdb.org/en/stable/intro/api.html
-
-If it went well, you will receive the following response:
-
-```{"ok":true}```
-
-Exit app container by simply typing ```exit```.
-
-Your app should now be ready.
+#### After cuccessful app deployment, your app should now be ready to use.
 
 
 
