@@ -50,16 +50,19 @@ Install a CouchDB plugin:
 Create a CouchDB databases (call them ‘sites’ and 'users'):
 
 ```dokku couchdb:create sites```
+
 ```dokku couchdb:create users```
 
 Link the sites database with your app:
 
 ```dokku couchdb:link sites <your app>  --alias COUCHDB_SITES```
+
 ```dokku couchdb:link users <your app>  --alias COUCHDB_USERS```
 
 This will create an environment variable in your app that will look something like this:
 
 ```COUCHDB_SITES_URL=http://sites:<generated-complex-password>@dokku-couchdb-sites:5984/sites```
+
 ```COUCHDB_USERS_URL=http://users:<generated-complex-password>@dokku-couchdb-sites:5984/users```
 
 Now your CouchDB instance has databases called ‘sites’ and ‘users’.

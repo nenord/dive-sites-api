@@ -17,9 +17,9 @@ else:
     PASSWORD_S = url_str_s[1]
     COUCHDB_URL_S = url_str_s[2]
     url_str_u = parse_url(os.environ.get('COUCHDB_USERS_URL'))
-    USER_S = url_str_u[0]
-    PASSWORD_S = url_str_u[1]
-    COUCHDB_URL_S = url_str_u[2]
+    USER_U = url_str_u[0]
+    PASSWORD_U = url_str_u[1]
+    COUCHDB_URL_U = url_str_u[2]
 
 # SITES - helper functions
 
