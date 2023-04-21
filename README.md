@@ -18,7 +18,7 @@ Run a CouchDB docker image with:
 
 ```docker run -d --name my-couchdb -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password -p 5984:5984 couchdb:latest```
 
-This will run a CouchDB database in a Docker container.
+This will run a CouchDB database in a Docker container. You will also need to create two tables 'sites' abd 'users'.
 
 Setup the following environment variables:
 1.	TEST=```<any string>``` (it just needs to exist and be some non-null/non-false value; used for the environment to know it is on dev and pick up Docker container database)
